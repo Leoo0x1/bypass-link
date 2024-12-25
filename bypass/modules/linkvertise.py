@@ -11,6 +11,22 @@ async def session(input_url):
     session_id = str(uuid.uuid4())
     proxyUrl = proxy.rand()
 
+    if "&o=sharing" in input_url:
+        input_url = input_url.replace("&o=sharing", "", -1)
+    if "?o=sharing" in input_url:
+        input_url = input_url.replace("?o=sharing", "", -1)
+    valid_url_hosts = [
+        "direct-link.net",
+        "link-hub.net",
+        "link-to.net",
+        "linkvertise.com",
+        "link-center.net",
+        "link-target.net",
+    ]
+    url_host = input_url.split("/")[2]
+    if url_host not in valid_url_hosts:
+        return "INVALID_URL"
+
     requestPayload = {
         "catchPanics": False,
         "certificatePinningHosts": None,
@@ -138,14 +154,10 @@ async def get_access_token(requestPayload, input_url, user_token):
         "priority": "u=1, i",
     }
     requestPayload["headerOrder"] = None
-    user_id = input_url.split("/")[3]
-    url_id = input_url.split("/")[4]
     req_body = {
         "operationName": "getDetailPageContent",
         "variables": {
-            "linkIdentificationInput": {
-                "userIdAndUrl": {"user_id": user_id, "url": url_id}
-            },
+            "linkIdentificationInput": {},
             "origin": "sharing",
             "additional_data": {
                 "taboola": {
@@ -159,6 +171,28 @@ async def get_access_token(requestPayload, input_url, user_token):
         },
         "query": "mutation getDetailPageContent($linkIdentificationInput: PublicLinkIdentificationInput!, $origin: String, $additional_data: CustomAdOfferProviderAdditionalData!) {\n  getDetailPageContent(\n    linkIdentificationInput: $linkIdentificationInput\n    origin: $origin\n    additional_data: $additional_data\n  ) {\n    access_token\n    payload_bag {\n      taboola {\n        session_id\n        __typename\n      }\n      __typename\n    }\n    premium_subscription_active\n    link {\n      id\n      video_url\n      short_link_title\n      recently_edited\n      short_link_title\n      description\n      url\n      seo_faqs {\n        body\n        title\n        __typename\n      }\n      target_host\n      last_edit_at\n      link_images {\n        url\n        __typename\n      }\n      title\n      thumbnail_url\n      view_count\n      is_trending\n      recently_edited\n      seo_faqs {\n        title\n        body\n        __typename\n      }\n      percentage_rating\n      is_premium_only_link\n      publisher {\n        id\n        name\n        subscriber_count\n        __typename\n      }\n      positive_rating\n      negative_rating\n      already_rated_by_user\n      user_rating\n      __typename\n    }\n    linkCustomAdOffers {\n      title\n      call_to_action\n      description\n      countdown\n      completion_token\n      provider\n      provider_additional_payload {\n        taboola {\n          available_event_url\n          visible_event_url\n          __typename\n        }\n        __typename\n      }\n      media {\n        type\n        ... on UrlMediaResource {\n          content_type\n          resource_url\n          __typename\n        }\n        __typename\n      }\n      clickout_action {\n        type\n        ... on CustomAdOfferClickoutUrlAction {\n          type\n          clickout_url\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    link_recommendations {\n      short_link_title\n      target_host\n      id\n      url\n      publisher {\n        id\n        name\n        __typename\n      }\n      last_edit_at\n      link_images {\n        url\n        __typename\n      }\n      title\n      thumbnail_url\n      view_count\n      is_trending\n      recently_edited\n      percentage_rating\n      publisher {\n        name\n        __typename\n      }\n      __typename\n    }\n    target_access_information {\n      remaining_waiting_time\n      __typename\n    }\n    __typename\n  }\n}",
     }
+    if "dynamic" in input_url:
+        user_id = input_url.split("/")[3]
+        hash = input_url.split("/")[5].split("?r=")[1]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndHash"] = {
+            "user_id": user_id,
+            "hash": hash,
+            "originates_from_adfly": False,
+        }
+        req_body["variables"]["additional_data"]["taboola"]["url"] = (
+            input_url + "&o=sharing"
+        )
+    else:
+        user_id = input_url.split("/")[3]
+        url_id = input_url.split("/")[4]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndUrl"] = {
+            "user_id": user_id,
+            "url": url_id,
+        }
+        req_body["variables"]["additional_data"]["taboola"]["url"] = (
+            input_url + "?o=sharing"
+        )
+
     requestPayload["requestBody"] = json.dumps(req_body)
     requestPayload["requestMethod"] = "POST"
     requestPayload["requestUrl"] = (
@@ -211,13 +245,26 @@ async def get_target_token(requestPayload, input_url, user_token, access_token):
     req_body = {
         "operationName": "completeDetailPageContent",
         "variables": {
-            "linkIdentificationInput": {
-                "userIdAndUrl": {"user_id": user_id, "url": url_id}
-            },
+            "linkIdentificationInput": {},
             "completeDetailPageContentInput": {"access_token": access_token},
         },
         "query": "mutation completeDetailPageContent($linkIdentificationInput: PublicLinkIdentificationInput!, $completeDetailPageContentInput: CompleteDetailPageContentInput!) {\n  completeDetailPageContent(\n    linkIdentificationInput: $linkIdentificationInput\n    completeDetailPageContentInput: $completeDetailPageContentInput\n  ) {\n    CUSTOM_AD_STEP\n    TARGET\n    additional_target_access_information {\n      remaining_waiting_time\n      can_not_access\n      should_show_ads\n      has_long_paywall_duration\n      __typename\n    }\n    __typename\n  }\n}",
     }
+    if "dynamic" in input_url:
+        user_id = input_url.split("/")[3]
+        hash = input_url.split("/")[5].split("?r=")[1]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndHash"] = {
+            "user_id": user_id,
+            "hash": hash,
+            "originates_from_adfly": False,
+        }
+    else:
+        user_id = input_url.split("/")[3]
+        url_id = input_url.split("/")[4]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndUrl"] = {
+            "user_id": user_id,
+            "url": url_id,
+        }
     requestPayload["requestBody"] = json.dumps(req_body)
     requestPayload["requestMethod"] = "POST"
     requestPayload["requestUrl"] = (
@@ -278,14 +325,27 @@ async def get_result_url(requestPayload, input_url, user_token, target_token):
     req_body = {
         "operationName": "getDetailPageTarget",
         "variables": {
-            "linkIdentificationInput": {
-                "userIdAndUrl": {"user_id": user_id, "url": url_id}
-            },
+            "linkIdentificationInput": {},
             "token": target_token,
             "action_id": str(uuid.uuid4()) + str(uuid.uuid4()) + str(uuid.uuid4()),
         },
         "query": "mutation getDetailPageTarget($linkIdentificationInput: PublicLinkIdentificationInput!, $token: String!, $action_id: String) {\n  getDetailPageTarget(\n    linkIdentificationInput: $linkIdentificationInput\n    token: $token\n    action_id: $action_id\n  ) {\n    type\n    url\n    paste\n    short_link_title\n    __typename\n  }\n}",
     }
+    if "dynamic" in input_url:
+        user_id = input_url.split("/")[3]
+        hash = input_url.split("/")[5].split("?r=")[1]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndHash"] = {
+            "user_id": user_id,
+            "hash": hash,
+            "originates_from_adfly": False,
+        }
+    else:
+        user_id = input_url.split("/")[3]
+        url_id = input_url.split("/")[4]
+        req_body["variables"]["linkIdentificationInput"]["userIdAndUrl"] = {
+            "user_id": user_id,
+            "url": url_id,
+        }
     requestPayload["requestBody"] = json.dumps(req_body)
 
     requestPayload["requestMethod"] = "POST"

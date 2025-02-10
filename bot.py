@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import sys
 
 from aiogram import Bot, Dispatcher, html
@@ -8,11 +9,12 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
+from dotenv import load_dotenv
+
 from main import main
 
 # Bot token can be obtained via https://t.me/BotFather
-TOKEN = "7277052980:AAEhBr7wLKqzv8CmeBqcXg3RjIpxwNq1h0Y"
-
+load_dotenv()
 # All handlers should be attached to the Router (or Dispatcher)
 
 dp = Dispatcher()
@@ -47,12 +49,12 @@ async def echo_handler(message: Message) -> None:
         await temp_message.edit_text(result)
     except TypeError:
         # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+        await message.answer("Error sending the message")
 
 
 async def bot() -> None:
     # Initialize Bot instance with default bot properties which will be passed to all API calls
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = Bot(token=os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     # And the run events dispatching
     await dp.start_polling(bot)

@@ -7,8 +7,8 @@ async def main(input_url):
     coroutines = []
 
     # Create coroutines and tasks
-    for cr in range(500):
-        print("[%d]: Bypassing link" % cr)
+    for cr in range(1):
+        print("[%d]:Bypassing link" % cr)
         task = asyncio.create_task(linkvertise.bypass(cr, input_url))
         coroutines.append(task)
 
@@ -27,4 +27,5 @@ async def main(input_url):
 
 
 if __name__ == "__main__":
-    asyncio.run(main("https://linkvertise.com/382645/content8988"))
+    input_url = input("Input the link you want to bypass: ")
+    asyncio.run(main(input_url))

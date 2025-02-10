@@ -58,11 +58,11 @@ async def session(input_url):
         "streamOutputPath": None,
         "timeoutMilliseconds": 0,
         "timeoutSeconds": 0,
-        "tlsClientIdentifier": "chrome_124",
+        "tlsClientIdentifier": "chrome_131",
         "withDebug": False,
         "withDefaultCookieJar": False,
         "withoutCookieJar": False,
-        "withRandomTLSExtensionOrder": False,
+        "withRandomTLSExtensionOrder": True,
     }
 
     user_token = await get_user_token(requestPayload)
@@ -73,7 +73,7 @@ async def session(input_url):
         requestPayload, input_url, user_token, access_token
     )
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(30)
 
     result_url = await get_result_url(
         requestPayload, input_url, user_token, target_token
@@ -95,12 +95,12 @@ async def bypass(cr, input_url):
 async def get_user_token(requestPayload):
     requestPayload["headers"] = {
         "Host": "publisher.linkvertise.com",
-        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="124"',
+        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="131"',
         "accept": "application/json",
         "sec-ch-ua-platform": '"Windows"',
         "dnt": "1",
         "sec-ch-ua-mobile": "?0",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "content-type": "application/json",
         "origin": "https://linkvertise.com",
         "sec-fetch-site": "same-site",
@@ -110,7 +110,23 @@ async def get_user_token(requestPayload):
         "accept-language": "en-US,en;q=0.9",
         "priority": "u=1, i",
     }
-    requestPayload["headerOrder"] = None
+    requestPayload["headerOrder"] = [
+        "Host",
+        "sec-ch-ua",
+        "accept",
+        "sec-ch-ua-platform",
+        "dnt",
+        "sec-ch-ua-mobile",
+        "user-agent",
+        "content-type",
+        "origin",
+        "sec-fetch-site",
+        "sec-fetch-mode",
+        "sec-fetch-dest",
+        "referer",
+        "accept-language",
+        "priority"
+    ]
     requestPayload["requestBody"] = ""
     requestPayload["requestMethod"] = "GET"
     requestPayload["requestUrl"] = "https://publisher.linkvertise.com/api/v1/account"
@@ -138,12 +154,12 @@ async def get_user_token(requestPayload):
 async def get_access_token(requestPayload, input_url, user_token):
     requestPayload["headers"] = {
         "Host": "publisher.linkvertise.com",
-        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="124"',
+        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="131"',
         "accept": "application/json",
         "sec-ch-ua-platform": '"Windows"',
         "dnt": "1",
         "sec-ch-ua-mobile": "?0",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "content-type": "application/json",
         "origin": "https://linkvertise.com",
         "sec-fetch-site": "same-site",
@@ -153,7 +169,23 @@ async def get_access_token(requestPayload, input_url, user_token):
         "accept-language": "en-US,en;q=0.9",
         "priority": "u=1, i",
     }
-    requestPayload["headerOrder"] = None
+    requestPayload["headerOrder"] = [
+        "Host",
+        "sec-ch-ua",
+        "accept",
+        "sec-ch-ua-platform",
+        "dnt",
+        "sec-ch-ua-mobile",
+        "user-agent",
+        "content-type",
+        "origin",
+        "sec-fetch-site",
+        "sec-fetch-mode",
+        "sec-fetch-dest",
+        "referer",
+        "accept-language",
+        "priority"
+    ]
     req_body = {
         "operationName": "getDetailPageContent",
         "variables": {
@@ -224,12 +256,12 @@ async def get_access_token(requestPayload, input_url, user_token):
 async def get_target_token(requestPayload, input_url, user_token, access_token):
     requestPayload["headers"] = {
         "Host": "publisher.linkvertise.com",
-        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="124"',
+        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="131"',
         "accept": "application/json",
         "sec-ch-ua-platform": '"Windows"',
         "dnt": "1",
         "sec-ch-ua-mobile": "?0",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "content-type": "application/json",
         "origin": "https://linkvertise.com",
         "sec-fetch-site": "same-site",
@@ -239,7 +271,23 @@ async def get_target_token(requestPayload, input_url, user_token, access_token):
         "accept-language": "en-US,en;q=0.9",
         "priority": "u=1, i",
     }
-    requestPayload["headerOrder"] = None
+    requestPayload["headerOrder"] = [
+        "Host",
+        "sec-ch-ua",
+        "accept",
+        "sec-ch-ua-platform",
+        "dnt",
+        "sec-ch-ua-mobile",
+        "user-agent",
+        "content-type",
+        "origin",
+        "sec-fetch-site",
+        "sec-fetch-mode",
+        "sec-fetch-dest",
+        "referer",
+        "accept-language",
+        "priority"
+    ]
     user_id = input_url.split("/")[3]
     url_id = input_url.split("/")[4]
     req_body = {
@@ -290,9 +338,9 @@ async def get_target_token(requestPayload, input_url, user_token, access_token):
             "additional_target_access_information"
         ]["remaining_waiting_time"]
 
-        if waiting_time > 10:
+        if waiting_time > 30:
             await tls.free_session(requestPayload)
-            raise ValueError("restart session [bad proxy]")
+            raise ValueError(f'restart session [bad proxy ({waiting_time})]')
 
     else:
         await tls.free_session(requestPayload)
@@ -304,12 +352,12 @@ async def get_target_token(requestPayload, input_url, user_token, access_token):
 async def get_result_url(requestPayload, input_url, user_token, target_token):
     requestPayload["headers"] = {
         "Host": "publisher.linkvertise.com",
-        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="124"',
+        "sec-ch-ua": '"Not;A=Brand";v="24", "Chromium";v="131"',
         "accept": "application/json",
         "sec-ch-ua-platform": '"Windows"',
         "dnt": "1",
         "sec-ch-ua-mobile": "?0",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "content-type": "application/json",
         "origin": "https://linkvertise.com",
         "sec-fetch-site": "same-site",
@@ -319,7 +367,23 @@ async def get_result_url(requestPayload, input_url, user_token, target_token):
         "accept-language": "en-US,en;q=0.9",
         "priority": "u=1, i",
     }
-    requestPayload["headerOrder"] = None
+    requestPayload["headerOrder"] = [
+        "Host",
+        "sec-ch-ua",
+        "accept",
+        "sec-ch-ua-platform",
+        "dnt",
+        "sec-ch-ua-mobile",
+        "user-agent",
+        "content-type",
+        "origin",
+        "sec-fetch-site",
+        "sec-fetch-mode",
+        "sec-fetch-dest",
+        "referer",
+        "accept-language",
+        "priority"
+    ]
     user_id = input_url.split("/")[3]
     url_id = input_url.split("/")[4]
     req_body = {
